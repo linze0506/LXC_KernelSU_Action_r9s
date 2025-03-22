@@ -1,10 +1,10 @@
-name: 低端机 谷歌clang12.0.5
+name: Build Kernel by Android NDK
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name:
+    name: Build Kernel by Android NDK
     runs-on: ubuntu-22.04
     if: github.event.repository.owner.id == github.event.sender.id
 
@@ -41,9 +41,10 @@ jobs:
     - name: 下载谷歌clang12编译器
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        mkdir clang-aosp
-        git clone -q --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 -b android12-release clang-aosp
-
+        mkdir tool
+        wget -O ndk.zip https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
+        unzip ndk.zip -d tool/
+        
     - name: 下载内核源码
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
@@ -94,7 +95,7 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/clang-r416183b/bin:$PATH
+        export PATH=$GITHUB_WORKSPACE/kernel_workspace/tool/android-ndk-r13b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin:$PATH
         make O=out ARCH=arm64 ${{ env.KERNEL_CONFIG }}
         if [ ${{env.LLVM_CONFIG}}=y ]; then
         make -j$(nproc --all) CC="ccache clang" O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" CROSS_COMPILE_ARM32="arm-linux-gnueabi-" LLVM=1 LLVM_IAS=1
