@@ -44,6 +44,8 @@ jobs:
         mkdir tool
         wget -O ndk.zip https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
         unzip ndk.zip -d tool/
+        cd ./tool
+        mv *-ndk-* NDK
         
     - name: 下载内核源码
       run: |
@@ -95,12 +97,13 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        export PATH=$GITHUB_WORKSPACE/kernel_workspace/tool/android-ndk-r13b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin:$PATH
+        export PATH=$GITHUB_WORKSPACE/kernel_workspace/tool/NDK/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin:$PATH
+        export CROSS_COMPILE=aarch64-linux-android-
         make O=out ARCH=arm64 ${{ env.KERNEL_CONFIG }}
         if [ ${{env.LLVM_CONFIG}}=y ]; then
-        make -j$(nproc --all) CC="ccache clang" O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" CROSS_COMPILE_ARM32="arm-linux-gnueabi-" LLVM=1 LLVM_IAS=1
+        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" LLVM=1 LLVM_IAS=1
         else
-        make -j$(nproc --all) CC="ccache clang" O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" CROSS_COMPILE_ARM32="arm-linux-gnueabi-"
+        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-"
         fi
 
     - name: 准备打包内核
