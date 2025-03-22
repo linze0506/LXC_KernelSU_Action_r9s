@@ -101,9 +101,9 @@ jobs:
         export CROSS_COMPILE=aarch64-linux-android-
         make O=out ARCH=arm64 ${{ env.KERNEL_CONFIG }}
         if [ ${{env.LLVM_CONFIG}}=y ]; then
-        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" LLVM=1 LLVM_IAS=1
+        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-android-" LLVM=1 LLVM_IAS=1
         else
-        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-"
+        make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE="aarch64-linux-android-"
         fi
 
     - name: 准备打包内核
