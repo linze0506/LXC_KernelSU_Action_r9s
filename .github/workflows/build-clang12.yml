@@ -118,7 +118,13 @@ jobs:
 
 
     - name: 打包并上传
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.KERNEL_ZIP_NAME }}
         path: kernel_workspace/AnyKernel3/*
+
+    - name: 上传wlan.ko
+      uses: actions/upload-artifact@v4
+      with:
+        name: wlan.ko
+        path: kernel_workspace/android-kernel/out/drivers/staging/prima/wlan.ko
